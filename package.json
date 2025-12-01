@@ -3,7 +3,10 @@
   "version": "0.0.1",
   "description": "n8n nodes for Aliyun services",
   "keywords": [
-    "n8n-community-node-package"
+    "n8n-community-node-package",
+    "n8n-nodes-aliyun",
+    "n8n-nodes-aliyun-utils",
+    "n8n-nodes"
   ],
   "license": "MIT",
   "homepage": "",
