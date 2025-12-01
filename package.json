@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-aliyun-utils",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "n8n nodes for Aliyun services",
   "keywords": [
     "n8n-community-node-package",
