@@ -101,6 +101,11 @@ export class Aliyun implements INodeType {
 				default: '',
 				required: true,
 				description: 'The region ID of the instance',
+				displayOptions: {
+					show: {
+						resource: ['ecs'],
+					},
+				},
 			},
 
 			// 高级选项
