@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="ecsGradient" x1="6" y1="4" x2="26" y2="28" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#FFB347"/>
+            <stop offset="1" stop-color="#FF6A00"/>
+        </linearGradient>
+    </defs>
+    <rect x="3" y="5" width="26" height="22" rx="6" fill="url(#ecsGradient)"/>
+    <rect x="7" y="10" width="18" height="4" rx="2" fill="white" opacity="0.9"/>
+    <rect x="7" y="18" width="18" height="4" rx="2" fill="white" opacity="0.9"/>
+    <circle cx="11" cy="12" r="1" fill="#FF6A00"/>
+    <circle cx="11" cy="20" r="1" fill="#FF6A00"/>
+</svg>

@@ -14,7 +14,7 @@ export class AliyunCdn implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Aliyun CDN',
 		name: 'aliyunCdn',
-		icon: 'file:aliyun.svg',
+		icon: 'file:aliyun-cdn.svg',
 		group: ['cloud'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',

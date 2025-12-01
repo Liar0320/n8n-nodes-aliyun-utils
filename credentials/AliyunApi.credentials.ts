@@ -1,10 +1,4 @@
-import {
-	ICredentialDataDecryptedObject,
-	ICredentialTestRequest,
-	ICredentialType,
-	IHttpRequestOptions,
-	INodeProperties,
-} from 'n8n-workflow';
+import { ICredentialDataDecryptedObject, ICredentialType, IHttpRequestOptions, INodeProperties } from 'n8n-workflow';
 import { createHmac, createHash, randomBytes } from 'crypto';
 import { URL } from 'url';
 
@@ -13,14 +7,6 @@ export class AliyunApi implements ICredentialType {
 	displayName = 'Aliyun API';
 	documentationUrl = 'https://help.aliyun.com/document_detail/378664.html';
 	properties: INodeProperties[] = [
-		{
-			displayName: 'Region',
-			name: 'region',
-			type: 'string',
-			default: 'cn-hangzhou',
-			required: true,
-			description: '地域 ID',
-		},
 		{
 			displayName: 'Access Key ID',
 			name: 'accessKeyId',
@@ -239,17 +225,4 @@ export class AliyunApi implements ICredentialType {
 
 		return result;
 	}
-
-	test: ICredentialTestRequest = {
-		request: {
-			baseURL: '=https://ecs.{{$credentials.region}}.aliyuncs.com',
-			url: '/',
-			method: 'GET',
-			qs: {
-				Action: 'DescribeRegions',
-				Version: '2014-05-26',
-				Format: 'JSON',
-			},
-		},
-	};
 }

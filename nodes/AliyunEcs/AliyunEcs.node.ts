@@ -10,17 +10,17 @@ import Ecs20140526, { DescribeInstancesRequest } from '@alicloud/ecs20140526';
 import { Config } from '@alicloud/openapi-client';
 import { RuntimeOptions } from '@alicloud/tea-util';
 
-export class Aliyun implements INodeType {
+export class AliyunEcs implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Aliyun',
-		name: 'aliyun',
-		icon: 'file:aliyun.svg',
+		displayName: 'Aliyun ECS',
+		name: 'aliyunEcs',
+		icon: 'file:aliyun-ecs.svg',
 		group: ['cloud'],
 		version: 1,
-		subtitle: '={{$parameter["resource"] + ": " + $parameter["operation"]}}',
-		description: 'Manage Aliyun cloud resource',
+		subtitle: '={{$parameter["operation"]}}',
+		description: 'Manage Alibaba Cloud Elastic Compute Service (ECS)',
 		defaults: {
-			name: 'Aliyun',
+			name: 'Aliyun ECS',
 		},
 		inputs: [
 			{
@@ -41,39 +41,12 @@ export class Aliyun implements INodeType {
 			},
 		],
 		properties: [
-			// 资源类型选择
-			{
-				displayName: 'Resource',
-				name: 'resource',
-				type: 'options',
-				noDataExpression: true,
-				options: [
-					{
-						name: 'ECS',
-						value: 'ecs',
-						description: '云服务器 ECS',
-					},
-					// 后续可以添加更多产品
-					// {
-					//   name: 'RDS',
-					//   value: 'rds',
-					// },
-				],
-				default: 'ecs',
-				required: true,
-			},
-
-			// ECS 操作
+			// 操作
 			{
 				displayName: 'Operation',
 				name: 'operation',
 				type: 'options',
 				noDataExpression: true,
-				displayOptions: {
-					show: {
-						resource: ['ecs'],
-					},
-				},
 				options: [
 					{
 						name: 'DescribeInstances',
@@ -101,11 +74,6 @@ export class Aliyun implements INodeType {
 				default: '',
 				required: true,
 				description: 'The region ID of the instance',
-				displayOptions: {
-					show: {
-						resource: ['ecs'],
-					},
-				},
 			},
 
 			// 高级选项
@@ -115,12 +83,6 @@ export class Aliyun implements INodeType {
 				type: 'collection',
 				placeholder: 'Add Field',
 				default: {},
-				displayOptions: {
-					show: {
-						resource: ['ecs'],
-						operation: ['describeInstances'],
-					},
-				},
 				options: [
 					{
 						displayName: 'InstanceChargeType',
@@ -282,7 +244,6 @@ export class Aliyun implements INodeType {
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const returnData: INodeExecutionData[] = [];
-		const resource = this.getNodeParameter('resource', 0) as string;
 		const operation = this.getNodeParameter('operation', 0) as string;
 		const credentials = await this.getCredentials('aliyunApi');
 		const region = this.getNodeParameter('region', 0) as string;
@@ -294,136 +255,131 @@ export class Aliyun implements INodeType {
 		});
 
 		try {
-			if (resource === 'ecs') {
-				// 设置 ECS 端点
-				config.endpoint = `ecs.${region}.aliyuncs.com`;
-				const client = new Ecs20140526(config);
-				const runtime = new RuntimeOptions({});
+			// 设置 ECS 端点
+			config.endpoint = `ecs.${region}.aliyuncs.com`;
+			const client = new Ecs20140526(config);
+			const runtime = new RuntimeOptions({});
 
-				if (operation === 'describeInstances') {
-					// 获取额外参数
-					const additionalFields = this.getNodeParameter('additionalFields', 0) as {
-						instanceIds?: string;
-						vpcId?: string;
-						vSwitchId?: string;
-						zoneId?: string;
-						instanceType?: string;
-						instanceTypeFamily?: string;
-						instanceName?: string;
-						instanceChargeType?: string;
-						status?: string;
-						privateIpAddresses?: string;
-						publicIpAddresses?: string;
-						securityGroupId?: string;
-						keyPairName?: string;
-						tags?: string;
-						pageSize?: number;
-						pageNumber?: number;
-					};
+			if (operation === 'describeInstances') {
+				const additionalFields = this.getNodeParameter('additionalFields', 0) as {
+					instanceIds?: string;
+					vpcId?: string;
+					vSwitchId?: string;
+					zoneId?: string;
+					instanceType?: string;
+					instanceTypeFamily?: string;
+					instanceName?: string;
+					instanceChargeType?: string;
+					status?: string;
+					privateIpAddresses?: string;
+					publicIpAddresses?: string;
+					securityGroupId?: string;
+					keyPairName?: string;
+					tags?: string;
+					pageSize?: number;
+					pageNumber?: number;
+				};
 
-					const request = new DescribeInstancesRequest({
-						regionId: region,
-						pageSize: additionalFields.pageSize,
-						pageNumber: additionalFields.pageNumber,
-					});
+				const request = new DescribeInstancesRequest({
+					regionId: region,
+					pageSize: additionalFields.pageSize,
+					pageNumber: additionalFields.pageNumber,
+				});
 
-					// 添加所有可选参数
-					if (additionalFields.instanceIds) {
-						try {
-							const instanceIds = JSON.parse(additionalFields.instanceIds);
-							if (Array.isArray(instanceIds)) {
-								request.instanceIds = JSON.stringify(instanceIds);
-							}
-						} catch (e) {
-							throw new NodeOperationError(this.getNode(), 'Invalid instance IDs format');
+				// 添加所有可选参数
+				if (additionalFields.instanceIds) {
+					try {
+						const instanceIds = JSON.parse(additionalFields.instanceIds);
+						if (Array.isArray(instanceIds)) {
+							request.instanceIds = JSON.stringify(instanceIds);
 						}
-					}
-
-					if (additionalFields.vpcId) {
-						request.vpcId = additionalFields.vpcId;
-					}
-
-					if (additionalFields.vSwitchId) {
-						request.vSwitchId = additionalFields.vSwitchId;
-					}
-
-					if (additionalFields.zoneId) {
-						request.zoneId = additionalFields.zoneId;
-					}
-
-					if (additionalFields.instanceType) {
-						request.instanceType = additionalFields.instanceType;
-					}
-
-					if (additionalFields.instanceTypeFamily) {
-						request.instanceTypeFamily = additionalFields.instanceTypeFamily;
-					}
-
-					if (additionalFields.instanceName) {
-						request.instanceName = additionalFields.instanceName;
-					}
-
-					if (additionalFields.instanceChargeType) {
-						request.instanceChargeType = additionalFields.instanceChargeType;
-					}
-
-					if (additionalFields.status) {
-						request.status = additionalFields.status;
-					}
-
-					if (additionalFields.privateIpAddresses) {
-						try {
-							const ips = JSON.parse(additionalFields.privateIpAddresses);
-							if (Array.isArray(ips)) {
-								request.privateIpAddresses = JSON.stringify(ips);
-							}
-						} catch (e) {
-							throw new NodeOperationError(this.getNode(), 'Invalid private IP addresses format');
-						}
-					}
-
-					if (additionalFields.publicIpAddresses) {
-						try {
-							const ips = JSON.parse(additionalFields.publicIpAddresses);
-							if (Array.isArray(ips)) {
-								request.publicIpAddresses = JSON.stringify(ips);
-							}
-						} catch (e) {
-							throw new NodeOperationError(this.getNode(), 'Invalid public IP addresses format');
-						}
-					}
-
-					if (additionalFields.securityGroupId) {
-						request.securityGroupId = additionalFields.securityGroupId;
-					}
-
-					if (additionalFields.keyPairName) {
-						request.keyPairName = additionalFields.keyPairName;
-					}
-
-					if (additionalFields.tags) {
-						try {
-							const tags = JSON.parse(additionalFields.tags);
-							if (Array.isArray(tags)) {
-								request.tag = tags;
-							}
-						} catch (e) {
-							throw new NodeOperationError(this.getNode(), 'Invalid tags format');
-						}
-					}
-
-					const response = await client.describeInstancesWithOptions(request, runtime);
-					const instances = response.body.instances?.instance || [];
-
-					for (const instance of instances) {
-						returnData.push({
-							json: instance,
-						});
+					} catch (e) {
+						throw new NodeOperationError(this.getNode(), 'Invalid instance IDs format');
 					}
 				}
-				// 可以添加更多 ECS 操作的处理逻辑
+
+				if (additionalFields.vpcId) {
+					request.vpcId = additionalFields.vpcId;
+				}
+
+				if (additionalFields.vSwitchId) {
+					request.vSwitchId = additionalFields.vSwitchId;
+				}
+
+				if (additionalFields.zoneId) {
+					request.zoneId = additionalFields.zoneId;
+				}
+
+				if (additionalFields.instanceType) {
+					request.instanceType = additionalFields.instanceType;
+				}
+
+				if (additionalFields.instanceTypeFamily) {
+					request.instanceTypeFamily = additionalFields.instanceTypeFamily;
+				}
+
+				if (additionalFields.instanceName) {
+					request.instanceName = additionalFields.instanceName;
+				}
+
+				if (additionalFields.instanceChargeType) {
+					request.instanceChargeType = additionalFields.instanceChargeType;
+				}
+
+				if (additionalFields.status) {
+					request.status = additionalFields.status;
+				}
+
+				if (additionalFields.privateIpAddresses) {
+					try {
+						const ips = JSON.parse(additionalFields.privateIpAddresses);
+						if (Array.isArray(ips)) {
+							request.privateIpAddresses = JSON.stringify(ips);
+						}
+					} catch (e) {
+						throw new NodeOperationError(this.getNode(), 'Invalid private IP addresses format');
+					}
+				}
+
+				if (additionalFields.publicIpAddresses) {
+					try {
+						const ips = JSON.parse(additionalFields.publicIpAddresses);
+						if (Array.isArray(ips)) {
+							request.publicIpAddresses = JSON.stringify(ips);
+						}
+					} catch (e) {
+						throw new NodeOperationError(this.getNode(), 'Invalid public IP addresses format');
+					}
+				}
+
+				if (additionalFields.securityGroupId) {
+					request.securityGroupId = additionalFields.securityGroupId;
+				}
+
+				if (additionalFields.keyPairName) {
+					request.keyPairName = additionalFields.keyPairName;
+				}
+
+				if (additionalFields.tags) {
+					try {
+						const tags = JSON.parse(additionalFields.tags);
+						if (Array.isArray(tags)) {
+							request.tag = tags;
+						}
+					} catch (e) {
+						throw new NodeOperationError(this.getNode(), 'Invalid tags format');
+					}
+				}
+
+				const response = await client.describeInstancesWithOptions(request, runtime);
+				const instances = response.body.instances?.instance || [];
+
+				for (const instance of instances) {
+					returnData.push({
+						json: instance,
+					});
+				}
 			}
-			// 可以添加更多产品的处理逻辑
 		} catch (error) {
 			if (error.message) {
 				throw new NodeOperationError(this.getNode(), error.message);
