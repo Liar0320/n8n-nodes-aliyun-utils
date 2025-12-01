@@ -67,7 +67,7 @@ export class AliyunCdn implements INodeType {
 				default: '',
 				required: true,
 				placeholder: 'https://example.com/path/file.jpg',
-				description: 'Enter URLs or directories separated by line breaks (up to 1,000 entries)',
+				description: 'Enter URLs, directories, or regex patterns separated by line breaks (up to 1,000 entries). For regex: use patterns like ^.*\.jpg$.',
 			},
 			{
 				displayName: 'Object Type',
@@ -83,8 +83,18 @@ export class AliyunCdn implements INodeType {
 						name: 'Directory',
 						value: 'Directory',
 					},
+					{
+						name: 'Regex',
+						value: 'regex',
+						description: 'Refresh content based on regular expression pattern',
+					},
+					{
+						name: 'Preload',
+						value: 'preload',
+						description: 'Prefetch content to CDN nodes',
+					},
 				],
-				description: 'Choose whether to refresh single files or whole directories',
+				description: 'Choose the type of refresh: file, directory, regex pattern, or preload',
 			},
 			{
 				displayName: 'Additional Fields',
