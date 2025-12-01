@@ -37,7 +37,7 @@ importers:
         specifier: ^8.56.0
         version: 8.57.0
       eslint-plugin-n8n-nodes-base:
-        specifier: ^1.16.1
+        specifier: ^1.16.3
         version: 1.16.3(eslint@8.57.0)(typescript@5.5.3)
       gulp:
         specifier: ^4.0.2
