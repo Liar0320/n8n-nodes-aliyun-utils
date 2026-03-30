@@ -1,6 +1,6 @@
 # n8n-aliyun
 
-在 n8n 中提供阿里云常用服务（目前包含 ECS 与 CDN）的原生节点，方便在工作流里直接调用云端 API，无需自建微服务或脚本。
+在 n8n 中提供阿里云常用服务（目前包含 ECS、CDN 与 OSS）的原生节点，方便在工作流里直接调用云端 API，无需自建微服务或脚本。
 
 ## 功能概览
 
@@ -8,6 +8,7 @@
 | --- | --- | --- |
 | Aliyun ECS | `DescribeInstances` | 通过丰富的过滤条件（Region、实例 ID、VPC/VSwitch、IP、标签等）查询云服务器详情，并将每个实例作为单条输出数据，便于后续节点处理。 |
 | Aliyun CDN | `RefreshObjectCaches` | 按路径或目录刷新 CDN 缓存，支持批量 URL、目录模式、强刷开关、OwnerId 与临时安全令牌等参数。 |
+| Aliyun OSS | `Put Object` | 将二进制数据上传到 OSS 存储桶，支持指定 Bucket、Region、Object Key 以及自定义二进制属性，自动设置 Content-Type。 |
 
 所有节点共用 `Aliyun API` 凭据。该凭据要求 AccessKey ID/Secret，并通过 ACS3-HMAC-SHA256 自动为请求签名。
 
@@ -26,6 +27,7 @@ pnpm build
 2. 在工作流中拖入所需节点：
    - **Aliyun ECS**：选择操作（目前仅 `DescribeInstances`），配置 Region、分页参数和附加过滤条件。
    - **Aliyun CDN**：粘贴要刷新的 URL/目录列表，指定刷新类型（文件/目录）以及是否强制刷新。
+   - **Aliyun OSS**：选择操作（目前仅 `Put Object`），配置 Bucket 名称、Region、Object Key，以及上游节点提供的二进制属性名。
 3. 运行节点，返回结果会以 JSON 的形式供后续节点使用。
 
 ## 开发与调试

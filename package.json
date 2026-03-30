@@ -43,7 +43,8 @@
     ],
     "nodes": [
       "dist/nodes/AliyunEcs/AliyunEcs.node.js",
-      "dist/nodes/AliyunCdn/AliyunCdn.node.js"
+      "dist/nodes/AliyunCdn/AliyunCdn.node.js",
+      "dist/nodes/AliyunOss/AliyunOss.node.js"
     ]
   },
   "devDependencies": {
@@ -61,6 +62,7 @@
     "@alicloud/cdn20180510": "^8.0.0",
     "@alicloud/ecs20140526": "^3.0.13",
     "@alicloud/openapi-client": "^0.4.13",
+    "@alicloud/oss20190517": "^1.0.6",
     "@alicloud/pop-core": "^1.8.0",
     "@alicloud/tea-typescript": "^1.8.0",
     "@alicloud/tea-util": "^1.4.10"
